@@ -6,7 +6,7 @@ npm-debug.*
 *.key
 *.mobileprovision
 
-.firebaserc
-firebase.json
-config
-storage.rules
+*.firebaserc
+firebase.*
+config/*
+*.rules
