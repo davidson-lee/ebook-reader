@@ -1,16 +1,24 @@
-const INITIAL_STATE = {
-    books: null,
-};
+import { BOOK_TYPES } from '../types'
 
-const applySetBooks = (state, action) => ({
-    ...state,
-    books: action.books
-});
+const INITIAL_STATE = {
+    books: [null],
+    loadingBooks: false,
+    error: null
+};
 
 const bookReducer = (state = INITIAL_STATE, action) => {
     switch(action.type) {
-        case 'BOOKS_SET': {
-            return applySetBooks(state, action);
+        case BOOK_TYPES.LOADING_BOOK: {
+            return {...state, loadingBooks: action.payload};
+        }
+        case BOOK_TYPES.SET_BOOK: {
+            return {...state, books: action.payload, loadingBooks: false};
+        }
+        case BOOK_TYPES.ACKNOWLEDGE_ERROR: {
+            return {...state, error: action.payload, loadingBooks: false};
+        }
+        case BOOK_TYPES.INIT: {
+            return {...INITIAL_STATE};
         }
         default:
             return state;

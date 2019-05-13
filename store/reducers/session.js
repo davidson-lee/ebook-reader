@@ -1,21 +1,23 @@
-import { FETCH_USER, SIGN_IN, SIGN_OUT, ACKNOWLEDGE_ERROR } from '../types'
+import { SESSION_TYPES } from '../types'
 
 const INITIAL_STATE = {
-    user: '0',
+    user: null,
     status: 'IDLE',
     errors: null
 }
 
 export default function (state = INITIAL_STATE, action) {
     switch(action.type) {
-        case FETCH_USER:
+        case SESSION_TYPES.FETCH_USER:
             return {...state, user: action.payload};
-        case SIGN_IN:
+        case SESSION_TYPES.SIGN_IN:
             return {...state, status: action.payload.status, error: action.payload.error};
-        case SIGN_OUT:
+        case SESSION_TYPES.SIGN_OUT:
             return {...state, ...action.payload};
-        case ACKNOWLEDGE_ERROR:
+        case SESSION_TYPES.ACKNOWLEDGE_ERROR:
             return {...state, error: action.payload};
+        case SESSION_TYPES.INIT:
+            return {...INITIAL_STATE};
         default:
             return state;
     }

@@ -1,10 +1,14 @@
 import React from 'react';
-import { Text, TextInput, Button, Alert, View } from 'react-native';
+import { Image, TextInput, Text, Alert, View, TouchableOpacity } from 'react-native';
 
 import { connect } from 'react-redux'
 import { signIn, fetchUser, signOut, acknowledgeError } from '../../store/actions/sessionActions'
+import { booksInit } from '../../store/actions/bookActions'
+
+import styles from './styles'
 
 import LoadingModal from 'library/components/LoadingModal'
+import Images from 'res/images'
 
 class SignInPage extends React.Component {
     static navigationOptions = {
@@ -21,6 +25,12 @@ class SignInPage extends React.Component {
         this.handleBack = this.handleBack.bind(this)
         this.showAlert = this.showAlert.bind(this)
     };
+
+    componentDidMount() {
+        if(this.props.books[0] !== null) {
+            this.props.booksInit()
+        }
+    }
 
     componentDidUpdate() {
         if (this.props.status === 'SIGN_IN_SUCCESS' && this.props.user === null) {
@@ -59,30 +69,49 @@ class SignInPage extends React.Component {
 
     render() {
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={styles.container}>
                 <LoadingModal 
                     visible={this.state.isLoading}
                     close={this.handleBack}
                 />
-                <View style={{backgroundColor:'rgba(0,0,0,0.1)'}}>
-                    <Text>Login</Text>
-                    <TextInput
-                        placeholder='Username'
-                        onChangeText={text => this.setState({email: text})}
-                    />
-                    <TextInput
-                        placeholder='Password'
-                        onChangeText={text => this.setState({pass: text})}
-                        secureTextEntry={true}
-                    />
-                    <Button
-                        onPress={this.handleSubmit}
-                        title='Login'
-                    />
-                    <Button
-                        onPress={() => this.props.signOut()}
-                        title='Logout'
-                    />
+                <View style={styles.loginBackground}>
+                    <View style={styles.loginContainer}>
+                        <View style={styles.imageContainer}>
+                            <Image 
+                                source={Images.logo}
+                                style={{flex: 1, height: undefined, width: undefined}}
+                                resizeMode='contain'
+                            />
+                        </View>
+                        <View style={styles.inputContaienr}>
+                            <TextInput
+                                placeholder='Email'
+                                autoCapitalize='none'
+                                style={styles.input}
+                                onChangeText={text => this.setState({email: text})}
+                                textContentType='emailAddress'
+                                placeholderTextColor='rgba(0,0,0,0.5)'
+                            />
+                            <TextInput
+                                placeholder='Password'
+                                autoCapitalize='none'
+                                style={styles.input}
+                                onChangeText={text => this.setState({pass: text})}
+                                secureTextEntry={true}
+                                placeholderTextColor='rgba(0,0,0,0.5)'
+                                textContentType='password'
+                            />
+                        </View>
+                        <View style={{flex: 0.75, justifyContent: 'center'}}>
+                            <TouchableOpacity
+                                onPress={this.handleSubmit}
+                                activeOpacity={0.8}
+                                style={styles.loginButton}
+                            >
+                                <Text style={{fontFamily: 'Bold', fontSize: 24}}>LOGIN</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
             </View>
         )
@@ -93,8 +122,9 @@ const mapStateToProps = (state) => {
     return { 
         user: state.sessions.user,
         status: state.sessions.status,
-        error: state.sessions.error
+        error: state.sessions.error,
+        books: state.books.books
     }
 }
 
-export default connect(mapStateToProps, { signIn, fetchUser, signOut, acknowledgeError })(SignInPage)
+export default connect(mapStateToProps, { signIn, fetchUser, signOut, acknowledgeError, booksInit })(SignInPage)

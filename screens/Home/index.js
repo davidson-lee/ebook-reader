@@ -1,53 +1,72 @@
 import React from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { Text, ScrollView, View, Button } from 'react-native';
 
 import { connect } from 'react-redux'
 
-import { signOut } from '../../store/actions/sessionActions'
+import { requestBooks } from '../../store/actions/bookActions'
+import { sessionInit } from '../../store/actions/sessionActions'
+
+import LoadingModal from 'library/components/LoadingModal'
+import BookPreview from 'library/components/BookPreview'
+import styles from './styles';
+
 
 class Home extends React.Component {
     static navigationOptions = {
-        header: null
+        title: 'My Books',
     }
     constructor(props) {
         super(props)
+        this.handleSignOut = this.handleSignOut.bind(this)
     }
-
     componentDidMount() {
-        if (!this.props.user) this.props.navigation.navigate('Auth')
+        this.props.requestBooks()
     }
-
-    componentDidUpdate() {
+    handleSignOut() {
+        this.props.sessionInit()
         this.props.navigation.navigate('Auth')
     }
-
     render() {
         return (
             <View style={styles.container}>
-                <Text>
-                    hi, {this.props.user ? this.props.user.email : null}
-                </Text>
-                <Button
-                    onPress={this.props.signOut}
-                    title='Logout'
+                <LoadingModal 
+                    visible={this.props.loading}
+                    close={() => null}
                 />
+                <View style={styles.headerContainer}>
+                    <Text style={{flex:1, fontFamily: 'SemiBold', fontSize: 24}}>TEST_USER</Text>
+                    <Button
+                        onPress={this.handleSignOut}
+                        title='Logout'
+                    />
+                </View>
+                <ScrollView style={{flex: 9}} horizontal={true} pagingEnabled={true} scrollEventThrottle={10} >
+                    {this.props.books[0] !== null
+                        ?   this.props.books.map((book, i) => {
+                                return  <BookPreview 
+                                            key={i} 
+                                            image={book.key} 
+                                            data={{
+                                                title: book.title,
+                                                author: book.author,
+                                                date: book.date,
+                                                subject: book.subject
+                                            }} 
+                                        />
+                            })
+                        :   null
+                    }
+                </ScrollView>
             </View>
         )
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-});
-
 const mapStateToProps = (state) => {
     return {
-        user: state.sessions.user
+        books: state.books.books,
+        loading: state.books.loadingBooks
     }
 }
 
-export default connect(mapStateToProps, { signOut })(Home)
+export default connect(mapStateToProps, { requestBooks, sessionInit })(Home)

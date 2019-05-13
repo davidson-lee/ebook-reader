@@ -1,11 +1,8 @@
 import React from 'react'
-import {
-    ActivityIndicator,
-    View
-} from 'react-native'
 
 import { connect } from 'react-redux'
 import { fetchUser } from '../../store/actions/sessionActions'
+import { getFonts} from '../../store/actions/styleActions'
 
 import LoadingModal from 'library/components/LoadingModal'
 
@@ -19,10 +16,11 @@ class AuthLoadingScreen extends React.Component {
 
     componentDidMount() {
         this.props.fetchUser()
+        this.props.getFonts()
     }
 
     componentDidUpdate() {
-        this.props.navigation.navigate(this.props.user ? 'App' : 'Auth')
+        this.props.navigation.navigate(this.props.user && this.props.font ? 'App' : 'Auth')
     }
 
     render() {
@@ -35,7 +33,8 @@ class AuthLoadingScreen extends React.Component {
 const mapStateToProps = (state) => {
     return { 
         user: state.sessions.user,
+        font: state.style.loadedFonts
     }
 }
 
-export default connect(mapStateToProps, { fetchUser })(AuthLoadingScreen)
+export default connect(mapStateToProps, { fetchUser, getFonts })(AuthLoadingScreen)

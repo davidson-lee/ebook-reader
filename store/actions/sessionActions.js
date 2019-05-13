@@ -1,15 +1,15 @@
 import { authRef } from '../../config/firebaseConfig'
-import { FETCH_USER, SIGN_IN, SIGN_OUT, ACKNOWLEDGE_ERROR } from '../types'
+import { SESSION_TYPES } from '../types'
 
 export const fetchUser = () => dispatch => {
     authRef.onAuthStateChanged(user => {
         user
             ? dispatch({
-                type: FETCH_USER,
+                type: SESSION_TYPES.FETCH_USER,
                 payload: user
             })
             : dispatch({
-                type: FETCH_USER,
+                type: SESSION_TYPES.FETCH_USER,
                 payload: null
             });
     })
@@ -21,14 +21,14 @@ export const signIn = (email, password) => dispatch => {
         .then(user => {
             user
                 ? dispatch({
-                    type: SIGN_IN,
+                    type: SESSION_TYPES.SIGN_IN,
                     payload: {
                         status: 'SIGN_IN_SUCCESS',
                         error: null
                     }
                 })
                 : dispatch({
-                    type: SIGN_IN,
+                    type: SESSION_TYPES.SIGN_IN,
                     payload: {
                         status: 'SIGN_IN_FAIL',
                         error: 'Unhandled Error'
@@ -36,7 +36,7 @@ export const signIn = (email, password) => dispatch => {
                 })
         }).catch(err => {
             dispatch({
-                type: SIGN_IN,
+                type: SESSION_TYPES.SIGN_IN,
                 payload: {
                     status: 'SIGN_IN_FAIL',
                     error: err.message
@@ -50,7 +50,7 @@ export const signOut = () => dispatch => {
         .signOut()
         .then(user => {
             dispatch({
-                type: SIGN_OUT,
+                type: SESSION_TYPES.SIGN_OUT,
                 payload: {
                     user: null,
                     status: 'SIGN_OUT_SUCCESS'
@@ -61,7 +61,14 @@ export const signOut = () => dispatch => {
 
 export const acknowledgeError = () => dispatch => {
     dispatch({
-        type: ACKNOWLEDGE_ERROR,
+        type: SESSION_TYPES.ACKNOWLEDGE_ERROR,
+        payload: null
+    })
+}
+
+export const sessionInit = () => dispatch => {
+    dispatch({
+        type: SESSION_TYPES.INIT,
         payload: null
     })
 }

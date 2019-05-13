@@ -1,6 +1,8 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 
+import { Font } from 'expo'
+
 import store from './store/store'
 
 import { createStackNavigator, createAppContainer, Alert, createSwitchNavigator } from 'react-navigation'
@@ -29,15 +31,12 @@ const Navigation = createAppContainer(createSwitchNavigator(
   }
 ))
 
-const showAlert = (message) => {
-  Alert.alert(message)
-}
-
 export default class App extends React.Component {
+
   render() {
     return (
       <Provider store={store}>
-        <Navigation alert={showAlert}/>
+        <Navigation/>
       </Provider>
     )
   }

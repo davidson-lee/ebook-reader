@@ -10,3 +10,4 @@ npm-debug.*
 firebase.*
 config/*
 *.rules
+functions
